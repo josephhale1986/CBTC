@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <title>Chris’s Bedtime Chaos</title>
+  <style>
+    html, body {
+      margin: 0; padding: 0; height: 100%; background: #0b1020; color: #fff; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      touch-action: none; overscroll-behavior: none;
+    }
+    #ui {
+      position: fixed; inset: 0; pointer-events: none;
+    }
+    .btn { pointer-events: auto; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 12px 16px; border-radius: 10px; backdrop-filter: blur(8px); }
+    .row { display: flex; gap: 12px; align-items: center; justify-content: center; }
+    .col { display: flex; flex-direction: column; gap: 12px; align-items: center; justify-content: center; }
+    #startScreen, #gameOver {
+      position: absolute; inset: 0; display: none; align-items: center; justify-content: center; text-align: center;
+    }
+    #startScreen.show, #gameOver.show { display: flex; }
+    #hud { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+    #hint { position: absolute; bottom: 14px; width: 100%; text-align: center; opacity: .8; font-size: 14px; }
+    canvas { display: block; width: 100vw; height: 100vh; }
+    .title { font-size: clamp(28px,5vw,48px); font-weight: 800; letter-spacing: .5px; }
+    .subtitle { opacity: .85; }
+    .primary { background: #7f5af0; border-color: #7f5af0; }
+    .ghost { background: transparent; }
+    .pill { border-radius: 999px; }
+    .small { font-size: 14px; opacity: .9; }
+    .kpis { gap: 16px; }
+  </style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+  <div id="ui">
+    <div id="hud">
+      <div class="row kpis">
+        <div>Score: <span id="score">0</span></div>
+        <div>Wave: <span id="wave">1</span></div>
+        <div>Awake: <span id="awake">0</span></div>
+      </div>
+      <div class="row">
+        <button id="btnPause" class="btn pill ghost" aria-label="Pause">⏸</button>
+        <button id="btnSound" class="btn pill ghost" aria-label="Sound">🔊</button>
+      </div>
+    </div>
+
+    <div id="startScreen" class="col show">
+      <div class="col">
+        <div class="title">Chris’s Bedtime Chaos</div>
+        <div class="subtitle">Flick pillows to gently guide kids to bed.</div>
+        <div class="row">
+          <button id="btnStart" class="btn primary pill">Start</button>
+          <button id="btnHow" class="btn pill ghost">How to Play</button>
+        </div>
+        <div class="small">High score: <span id="highScore">0</span></div>
+      </div>
+    </div>
+
+    <div id="gameOver" class="col">
+      <div class="col">
+        <div class="title">Night’s Over 🌙</div>
+        <div class="subtitle">Final score: <span id="finalScore">0</span></div>
+        <div class="row">
+          <button id="btnRetry" class="btn primary pill">Play Again</button>
+          <button id="btnShare" class="btn pill ghost">Share</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="hint">Drag to aim • release to toss a pillow</div>
+  </div>
+
+  <audio id="sPop" preload="auto">
+    <source src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABYBWFlaAAABAAACAAEA" type="audio/wav">
+  </audio>
+
+  <script defer src="game.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+      });
+    }
+  </script>
+</body>
+</html>
